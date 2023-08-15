@@ -1,6 +1,10 @@
-import { type RefObject, useLayoutEffect, useRef, useState } from "react"
+import { type RefObject, useLayoutEffect, useRef, useState, useEffect } from "react"
 
 const _DANGEROUSLY_HACKY_REVISION_POINTS = 23;
+const _DANGEROUSLY_HACKY_RESIZE_ANIMATION_DURATION = 0.12
+const _DANGEROUSLY_HACKY_SCROLL_ANIMATION_DURATION = 0.142
+const _DANGEROUSLY_HACKY_DELAY_DURATION = 0.08
+const _DANGEROUSLY_HACKY_DEBOUNCE_DURATION = 50
 
 const useSticky = ({buttonMarginBottom, inputs}: {
   inputs?: RefObject<HTMLInputElement>[]
@@ -12,6 +16,7 @@ const useSticky = ({buttonMarginBottom, inputs}: {
 
   const [isInputFocused, setIsInputFocused] = useState(false)
   const [revisionPoints, setRevisionPoints] = useState<null | number>(null)
+  const [debouncedRevisionPoints, setDebouncedRevisionPoints] = useState<null | number>(null)
 
   useLayoutEffect(() => {
     if(inputs && inputs.length > 0) {
@@ -81,22 +86,37 @@ const useSticky = ({buttonMarginBottom, inputs}: {
     }
   }, [])
 
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedRevisionPoints(revisionPoints);
+    }, _DANGEROUSLY_HACKY_DEBOUNCE_DURATION)
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [revisionPoints]);
+
+
   useLayoutEffect(() => {
     if(!buttonEl.current) return;
 
     if(isInputFocused) {
-      const translateY = (revisionPoints ?? 0) + buttonEl.current.clientHeight + buttonMarginBottom - _DANGEROUSLY_HACKY_REVISION_POINTS;
+      const translateY = (debouncedRevisionPoints ?? 0) + buttonEl.current.clientHeight + buttonMarginBottom - _DANGEROUSLY_HACKY_REVISION_POINTS;
 
+      buttonEl.current?.style.setProperty('transition', `transform ${window?.visualViewport?.offsetTop === 0 ? _DANGEROUSLY_HACKY_RESIZE_ANIMATION_DURATION : _DANGEROUSLY_HACKY_SCROLL_ANIMATION_DURATION}s ease-in-out`)
+      buttonEl.current?.style.setProperty('transition-delay', `${_DANGEROUSLY_HACKY_DELAY_DURATION}s`)
       buttonEl.current?.style.setProperty('position', 'absolute')
       buttonEl.current?.style.setProperty('transform', `translateY(-${translateY}px)`)
       setIsButtonSticky(true)
       return;
     }
 
+    buttonEl.current?.style.setProperty('transition', `transform 0s ease-in-out`)
+    buttonEl.current?.style.setProperty('transition-delay', '0s')
     buttonEl.current?.style.setProperty('position', 'relative')
     buttonEl.current?.style.setProperty('transform', `translateY(0px)`)
     setIsButtonSticky(false)
-  }, [isInputFocused, revisionPoints])
+  }, [isInputFocused, debouncedRevisionPoints])
 
   return { buttonEl, inputEl, isButtonSticky };
 }
