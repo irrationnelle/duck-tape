@@ -14,7 +14,7 @@ yarn add ducktape-button
 import { useRef } from 'react'
 import createStickyButton from 'ducktape-button';
 
-const useStickyButton = createSticktButton();
+const useStickyButton = createStickyButton();
 
 const ExampleComponent = () => {
   const inputEl = useRef();
