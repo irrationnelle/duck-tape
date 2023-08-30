@@ -7,11 +7,11 @@ const _DANGEROUSLY_HACKY_DELAY_DURATION = 0.08
 const _DANGEROUSLY_HACKY_DEBOUNCE_DURATION = 50
 
 const useSticky = ({buttonMarginBottom, inputs}: {
-  inputs?: RefObject<HTMLInputElement>[]
+  inputs?: RefObject<HTMLInputElement | HTMLTextAreaElement>[]
   buttonMarginBottom: number;
 }) => {
   const buttonEl = useRef<HTMLButtonElement>(null);
-  const inputEl = useRef<HTMLInputElement>(null);
+  const inputEl = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   const [isButtonSticky, setIsButtonSticky] = useState(false)
 
   const [isInputFocused, setIsInputFocused] = useState(false)
