@@ -122,7 +122,6 @@ const useSticky = ({buttonMarginBottom, inputs, scrollDOMRef}: {
 
     buttonEl.current?.style.setProperty('transition', `transform 0s ease-in-out`)
     buttonEl.current?.style.setProperty('transition-delay', '0s')
-    buttonEl.current?.style.setProperty('position', 'relative')
     buttonEl.current?.style.setProperty('transform', `translateY(0px)`)
     setIsButtonSticky(false)
   }, [isInputFocused, debouncedRevisionPoints])
