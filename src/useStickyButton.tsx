@@ -1,4 +1,4 @@
-import { type RefObject, useLayoutEffect, useRef, useState, useEffect } from "react"
+import { type RefObject, useLayoutEffect, useMemo, useRef, useState, useEffect } from "react"
 
 const _DANGEROUSLY_HACKY_REVISION_POINTS = 23;
 const _DANGEROUSLY_HACKY_RESIZE_ANIMATION_DURATION = 0.12
@@ -15,9 +15,21 @@ const useSticky = ({buttonMarginBottom, inputs, scrollDOMRef}: {
   const inputEl = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   const [isButtonSticky, setIsButtonSticky] = useState(false)
 
-  const [isInputFocused, setIsInputFocused] = useState(false)
-  const [revisionPoints, setRevisionPoints] = useState<null | number>(null)
-  const [debouncedRevisionPoints, setDebouncedRevisionPoints] = useState<null | number>(null)
+  const [_isInputFocused, setIsInputFocused] = useState(false)
+  const [_revisionPoints, setRevisionPoints] = useState<null | number>(null)
+  const [_debouncedRevisionPoints, setDebouncedRevisionPoints] = useState<null | number>(null)
+
+  const isInputFocused = useMemo(() => {
+    return _isInputFocused
+  }, [_isInputFocused])
+
+  const revisionPoints = useMemo(() => {
+    return _revisionPoints
+  }, [_revisionPoints])
+
+  const debouncedRevisionPoints = useMemo(() => {
+    return _debouncedRevisionPoints
+  }, [_debouncedRevisionPoints])
 
   useLayoutEffect(() => {
     if(inputs && inputs.length > 0) {
