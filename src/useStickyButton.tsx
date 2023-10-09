@@ -6,8 +6,9 @@ const _DANGEROUSLY_HACKY_SCROLL_ANIMATION_DURATION = 0.142
 const _DANGEROUSLY_HACKY_DELAY_DURATION = 0.08
 const _DANGEROUSLY_HACKY_DEBOUNCE_DURATION = 50
 
-const useSticky = ({buttonMarginBottom, inputs}: {
+const useSticky = ({buttonMarginBottom, inputs, scrollDOMRef}: {
   inputs?: RefObject<HTMLInputElement | HTMLTextAreaElement>[]
+  scrollDOMRef?: RefObject<HTMLElement>
   buttonMarginBottom: number;
 }) => {
   const buttonEl = useRef<HTMLButtonElement>(null);
@@ -76,13 +77,21 @@ const useSticky = ({buttonMarginBottom, inputs}: {
     scrollHandler();
 
     window.visualViewport.addEventListener('resize', resizeHandler)
-    window.addEventListener('scroll', scrollHandler)
+    if(scrollDOMRef.current) {
+      scrollDOMRef.current.addEventListener('scroll', scrollHandler)
+    } else {
+      window.addEventListener('scroll', scrollHandler)
+    }
 
     return () => {
       if(!window.visualViewport) return;
 
       window.visualViewport.removeEventListener('resize', resizeHandler)
-      window.addEventListener('scroll', scrollHandler)
+      if(scrollDOMRef.current) {
+        scrollDOMRef.current.removeEventListener('scroll', scrollHandler)
+      } else {
+        window.removeEventListener('scroll', scrollHandler)
+      }
     }
   }, [])
 
