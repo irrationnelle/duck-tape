@@ -1,10 +1,10 @@
-import { type RefObject, useLayoutEffect, useMemo, useRef, useState, useEffect } from "react"
+import { type RefObject, useEffect, useMemo, useRef, useState } from "react"
 
 const _DANGEROUSLY_HACKY_REVISION_POINTS = 23;
 const _DANGEROUSLY_HACKY_RESIZE_ANIMATION_DURATION = 0.12
 const _DANGEROUSLY_HACKY_SCROLL_ANIMATION_DURATION = 0.142
 const _DANGEROUSLY_HACKY_DELAY_DURATION = 0.08
-const _DANGEROUSLY_HACKY_DEBOUNCE_DURATION = 50
+const _DANGEROUSLY_HACKY_DEBOUNCE_DURATION = 200
 
 const useSticky = ({buttonMarginBottom, inputs, scrollDOMRef}: {
   inputs?: RefObject<HTMLInputElement | HTMLTextAreaElement>[]
@@ -31,7 +31,7 @@ const useSticky = ({buttonMarginBottom, inputs, scrollDOMRef}: {
     return _debouncedRevisionPoints
   }, [_debouncedRevisionPoints])
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if(inputs && inputs.length > 0) {
       inputs.forEach(input => {
         if(!input.current) return;
@@ -71,7 +71,7 @@ const useSticky = ({buttonMarginBottom, inputs, scrollDOMRef}: {
     }
   }, [])
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if(!window.visualViewport) return;
 
     const resizeHandler = () => {
@@ -118,7 +118,7 @@ const useSticky = ({buttonMarginBottom, inputs, scrollDOMRef}: {
   }, [revisionPoints]);
 
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if(!buttonEl.current) return;
 
     if(isInputFocused) {
